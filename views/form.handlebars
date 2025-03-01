@@ -15,4 +15,24 @@
         </div>
     </div>
 
+    {{!--Listagem  de Produtos--}}
+    <div class="container">
+        <div class="row"> 
+            {{#each produtos}}           
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="card">
+                        <img src="../imagens/images (1).jpeg">
+                        <div class="textos">
+                            <p>Camisa Polo Masculina</p>
+                            <p>R$ 69,90</p>
+                        </div>
+                        <a href="#" class="btn btn-warning">Alterar</a>
+                        <a href="#" class="btn btn-danger">Remover</a>
+                    </div>
+                </div> 
+            {{/each}}        
+
+        </div>
+    </div>
+
 </main>

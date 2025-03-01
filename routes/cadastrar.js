@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+const conexao = require('../db/mysql');
+
+
 
 
 //Rota de cadastro

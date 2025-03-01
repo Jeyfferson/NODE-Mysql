@@ -17,6 +17,9 @@ app.use('/bootstrap', express.static('./node_modules/bootstrap/dist'));
 //Referenciando o CSS
 app.use('/css', express.static('./css'));
 
+//Referenciar a pasta imagens
+app.use('/imagens', express.static('./imagens'));
+
 //Configuration the express-handlebars
 app.engine('handlebars', engine());
 app.set('view engine','handlebars');
@@ -30,10 +33,17 @@ app.use(express.urlencoded({extended: false}));
 const conexao = require('./db/mysql');
 
 
-
+//Rota principal
 app.get('/', (req, res) => {
-    res.render('form');
-})
+    let sql = 'SELECT * FROM produtos';
+
+    //Executar conexao SQL
+    conexao.query(sql, (err, retorno) => {
+        res.render('form', {produtos: retorno});
+        console.log(retorno)
+    });
+
+});
 
 //Rota de cadastro
 app.post('/cadastrar', (req, res) => {
@@ -57,6 +67,8 @@ app.post('/cadastrar', (req, res) => {
 
     res.redirect('/');
 });
+
+
 
 
 app.listen(3000);
