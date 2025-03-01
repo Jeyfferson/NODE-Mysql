@@ -4,10 +4,11 @@
     <div class="container">
         <div class="row">
             <div class="col-6 offset-3">
-                <form>
-                    <input type="text"   class="form-control" placeholder="Nome do Produto">
-                    <input type="number" class="form-control" placeholder="Valor do Produto">
-                    <input type="file"   class="form-control">
+                <form action="/cadastrar" method="post" enctype="multipart/form-data">
+                <input type="text" name="" id="">
+                    <input type="text"   name="nome" class="form-control" placeholder="Nome do Produto">
+                    <input type="number" name="valor" class="form-control" placeholder="Valor do Produto">
+                    <input type="file"   name="imagem" class="form-control">
                     <input type="submit" class="btn btn-primary" value="Cadastrar">
                 </form>
             </div>

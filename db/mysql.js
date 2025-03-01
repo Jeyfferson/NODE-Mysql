@@ -5,7 +5,7 @@ const conexao = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'projeto'
+    database: 'ecommerce'
 })
 
 conexao.connect(function (erro, conn) {
