@@ -24,7 +24,14 @@ app.use('/css', express.static('./css'));
 app.use('/imagens', express.static('./imagens'));
 
 //Configuration the express-handlebars
-app.engine('handlebars', engine());
+app.engine('handlebars', engine({
+    helpers: {
+        // Função auxiliar para verificar igualdade
+        condicionalIgualdade: function (parametro1, parametro2, options) {
+          return parametro1 === parametro2 ? options.fn(this) : options.inverse(this);
+        }
+      }
+    }));
 app.set('view engine','handlebars');
 app.set('views', './views');
 
@@ -93,29 +100,6 @@ app.post('/cadastrar', (req, res) => {
     }
 });
 
-
-
-//Rota de delete de produto
-app.get('/remover/:codigo&:imagem', (req, res) => {
-    //SQL DELETE
-    let sql = `DELETE FROM produtos WHERE codigo = ${req.params.codigo}`;
-
-    //Execute SQL
-    conexao.query(sql, function(erro, retourn) {
-        //Caso falhe o cmd SQL
-        if(erro) throw erro;
-
-        //Caso o cmd funcione
-        fs.unlink(__dirname+'/imagens/'+req.params.imagem, (erro_img) => {
-            console.log('Item removido comsucesso.')
-        })
-    });
-
-    //Redirecionamento
-    res.redirect('/')
-
-});
-
 //Rota para redirecionar para o form de edição
 app.get('/formEditar/:codigo', (req, res) => {
     
@@ -139,9 +123,12 @@ app.get('/formEditar/:codigo', (req, res) => {
         let valor = req.body.valor;
         let codigo = req.body.codigo;
         let nomeImagem = req.body.nomeImagem;
-        
 
-        //Definir o tipo de edição
+        //Validar edicao
+        if(nome === '' || valor === '' || isNaN(valor)){
+            res.redirect('/falhaEdicao');
+        }else{
+            //Definir o tipo de edição
         try{
             //Objeto de imagem
             let imagem = req.files.imagem;
@@ -176,9 +163,35 @@ app.get('/formEditar/:codigo', (req, res) => {
         
 
         //Redirecionamento
-        res.redirect('/');
+        res.redirect('/okEditado');
+        }
+        
     });
 
+
+});
+
+//Rota de delete de produto
+app.get('/remover/:codigo&:imagem', (req, res) => {
+    try {
+        //SQL DELETE
+        let sql = `DELETE FROM produtos WHERE codigo = ${req.params.codigo}`;
+
+        //Execute SQL
+        conexao.query(sql, function(erro, retourn) {
+            //Caso falhe o cmd SQL
+            if(erro) throw erro;
+
+        //Caso o cmd funcione
+            fs.unlink(__dirname+'/imagens/'+req.params.imagem, (erro_img) => {
+        })
+    });
+
+    //Redirecionamento
+    res.redirect('/okRemovido')
+    }catch(e){
+        res.redirect('/falhaRemover');    
+    }
 
 });
 
