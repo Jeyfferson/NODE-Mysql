@@ -6,6 +6,9 @@ const fileupload = require('express-fileupload');
 //Import a express-handlebars
 const { engine} = require('express-handlebars');
 
+//Importar FliSystems para apagar elementos img
+const fs = require('fs');
+
 const app = express();
 
 //Habilitando o Upload de arquivos
@@ -40,7 +43,6 @@ app.get('/', (req, res) => {
     //Executar conexao SQL
     conexao.query(sql, (err, retorno) => {
         res.render('form', {produtos: retorno});
-        console.log(retorno)
     });
 
 });
@@ -62,13 +64,50 @@ app.post('/cadastrar', (req, res) => {
 
         //Caso ocorra o cadastro
         req.files.imagem.mv(__dirname+'/imagens/'+req.files.imagem.name);
-        console.log(retorno);
+    
     });
 
     res.redirect('/');
 });
 
+//Rota de delete de produto
+app.get('/remover/:codigo&:imagem', (req, res) => {
+    //SQL DELETE
+    let sql = `DELETE FROM produtos WHERE codigo = ${req.params.codigo}`;
 
+    //Execute SQL
+    conexao.query(sql, function(erro, retourn) {
+        //Caso falhe o cmd SQL
+        if(erro) throw erro;
+
+        //Caso o cmd funcione
+        fs.unlink(__dirname+'/imagens/'+req.params.imagem, (erro_img) => {
+            console.log('Item removido comsucesso.')
+        })
+    });
+
+    //Redirecionamento
+    res.redirect('/')
+
+});
+
+//Rota para redirecionar para o form de edição
+app.get('/formEditar/:codigo', (req, res) => {
+    
+    //SQL
+    let sql = `SELECT * FROM produtos WHERE codigo = ${req.params.codigo}`;
+
+    //Execute SQL
+    conexao.query(sql, function(erro, retorno) {
+        //Caso tenha erro
+        if(erro) throw erro;
+
+        //Tudo ok
+        res.render('formEditar', {produto:retorno[0]});
+    });
+
+
+});
 
 
 app.listen(3000);
